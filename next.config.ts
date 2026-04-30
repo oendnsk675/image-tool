@@ -1,7 +1,12 @@
-import type { NextConfig } from "next";
+import type { NextConfig } from 'next'
 
 const nextConfig: NextConfig = {
-  /* config options here */
-};
+  serverExternalPackages: [
+    'sharp',
+    '@imgly/background-removal-node',
+    '@prisma/client',
+    'prisma',
+  ],
+}
 
-export default nextConfig;
+export default nextConfig
