@@ -16,17 +16,7 @@ import {
 } from '@/components/ui/select'
 import { formatBytes } from '@/lib/utils'
 import { toast } from 'sonner'
-
-interface HistoryEntry {
-  id: string
-  filename: string
-  originalFormat: string
-  outputFormat: string
-  originalSize: number
-  outputSize: number
-  operation: 'convert' | 'remove-bg'
-  createdAt: string
-}
+import { getHistoryEntries, saveHistoryEntries, type HistoryEntry } from '@/lib/local-history'
 
 const ITEMS_PER_PAGE = 10
 
@@ -39,15 +29,8 @@ export default function HistoryPage() {
 
   const fetchHistory = async () => {
     setLoading(true)
-    try {
-      const res = await fetch('/api/history')
-      const { data } = await res.json()
-      setEntries(data ?? [])
-    } catch {
-      toast.error('Failed to load history')
-    } finally {
-      setLoading(false)
-    }
+    setEntries(getHistoryEntries())
+    setLoading(false)
   }
 
   useEffect(() => {
@@ -56,8 +39,9 @@ export default function HistoryPage() {
 
   const deleteEntry = async (id: string) => {
     try {
-      await fetch(`/api/history?id=${id}`, { method: 'DELETE' })
-      setEntries((prev) => prev.filter((e) => e.id !== id))
+      const next = entries.filter((e) => e.id !== id)
+      saveHistoryEntries(next)
+      setEntries(next)
       toast.success('Entry deleted')
     } catch {
       toast.error('Failed to delete entry')
@@ -66,7 +50,7 @@ export default function HistoryPage() {
 
   const deleteAll = async () => {
     try {
-      await fetch('/api/history', { method: 'DELETE' })
+      saveHistoryEntries([])
       setEntries([])
       toast.success('History cleared')
     } catch {

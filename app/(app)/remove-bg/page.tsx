@@ -11,6 +11,7 @@ import { Badge } from '@/components/ui/badge'
 import { ProgressBar } from '@/components/progress-bar'
 import { formatBytes, cn } from '@/lib/utils'
 import { toast } from 'sonner'
+import { addHistoryEntry, getFileFormat } from '@/lib/local-history'
 
 interface RemoveBgItem {
   id: string
@@ -91,6 +92,14 @@ export default function RemoveBgPage() {
           }
 
           const blob = await res.blob()
+          addHistoryEntry({
+            filename: item.file.name,
+            originalFormat: getFileFormat(item.file),
+            outputFormat: 'png',
+            originalSize: item.file.size,
+            outputSize: blob.size,
+            operation: 'remove-bg',
+          })
           setItems((prev) =>
             prev.map((i) =>
               i.id === item.id ? { ...i, status: 'done', outputBlob: blob } : i

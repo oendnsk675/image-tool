@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { convertImage, getImageMetadata, type OutputFormat } from '@/lib/sharp'
-import { prisma } from '@/lib/prisma'
 import { checkRateLimit, convertLimiter } from '@/lib/rate-limit'
 import { getIdentifier } from '@/lib/get-identifier'
 
@@ -37,17 +36,6 @@ export async function POST(req: NextRequest) {
       width,
       height,
       maintainAspectRatio,
-    })
-
-    await prisma.conversionHistory.create({
-      data: {
-        filename: file.name,
-        originalFormat: meta.format ?? 'unknown',
-        outputFormat,
-        originalSize: file.size,
-        outputSize: outputBuffer.length,
-        operation: 'convert',
-      },
     })
 
     return new NextResponse(new Uint8Array(outputBuffer), {

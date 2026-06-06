@@ -8,6 +8,7 @@ import { Dropzone } from '@/components/dropzone'
 import { FileCard } from '@/components/file-card'
 import { useConverterStore } from '@/store/converter'
 import { toast } from 'sonner'
+import { addHistoryEntry, getFileFormat } from '@/lib/local-history'
 
 export default function ConverterPage() {
   const { files, addFiles, clearAll, setConverting, setDone, setError, setProgress } =
@@ -68,6 +69,14 @@ export default function ConverterPage() {
           }
 
           const blob = await res.blob()
+          addHistoryEntry({
+            filename: item.file.name,
+            originalFormat: getFileFormat(item.file),
+            outputFormat: item.outputFormat,
+            originalSize: item.file.size,
+            outputSize: blob.size,
+            operation: 'convert',
+          })
           setDone(item.id, blob, blob.size)
         } catch {
           setError(item.id, 'Network error')

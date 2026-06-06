@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { removeBg } from '@/lib/remove-bg'
-import { prisma } from '@/lib/prisma'
 import { checkRateLimit, removeBgLimiter } from '@/lib/rate-limit'
 import { getIdentifier } from '@/lib/get-identifier'
 
@@ -26,17 +25,6 @@ export async function POST(req: NextRequest) {
     const inputBuffer = Buffer.from(arrayBuffer)
 
     const outputBuffer = await removeBg(inputBuffer, file.type || 'image/png')
-
-    await prisma.conversionHistory.create({
-      data: {
-        filename: file.name,
-        originalFormat: file.type.replace('image/', '') || 'unknown',
-        outputFormat: 'png',
-        originalSize: file.size,
-        outputSize: outputBuffer.length,
-        operation: 'remove-bg',
-      },
-    })
 
     return new NextResponse(new Uint8Array(outputBuffer), {
       status: 200,

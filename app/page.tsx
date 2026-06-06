@@ -12,37 +12,14 @@ import {
   ZapIcon,
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
-import { useSession } from 'next-auth/react'
+import { AppNavbar } from '@/components/app-navbar'
 
 export default function LandingPage() {
-  const { data: session } = useSession()
-  const loggedIn = !!session?.user
-
-  const ctaHref = loggedIn ? '/converter' : '/signup'
+  const ctaHref = '/converter'
 
   return (
     <div className="flex min-h-screen flex-col">
-      {/* Nav */}
-      <header className="sticky top-0 z-50 border-b border-border/40 bg-background/80 backdrop-blur-md">
-        <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-3">
-          <Link href="/" className="flex items-center gap-2 text-lg font-bold">
-            <SparklesIcon className="h-6 w-6 text-primary" />
-            Pixform
-          </Link>
-          <div className="flex items-center gap-3">
-            {loggedIn ? (
-              <Button nativeButton={false} render={<Link href="/converter" />}>Go to Converter</Button>
-            ) : (
-              <>
-                  <Button variant="ghost" nativeButton={false} render={<Link href="/signin" />}>
-                  Sign In
-                </Button>
-                <Button nativeButton={false} render={<Link href="/signup" />}>Get Started</Button>
-              </>
-            )}
-          </div>
-        </div>
-      </header>
+      <AppNavbar />
 
       <main className="flex-1">
         {/* ========= Hero ========= */}
@@ -256,7 +233,7 @@ export default function LandingPage() {
         <footer className="border-t border-border/40 px-6 py-10">
           <div className="mx-auto max-w-6xl flex flex-col items-center gap-4 md:flex-row md:justify-between">
             <Link href="/" className="flex items-center gap-2 font-semibold">
-              <SparklesIcon className="h-5 w-5 text-primary" />
+              <WandSparklesIcon className="h-5 w-5 text-primary" />
               Pixform
             </Link>
             <p className="text-xs text-muted-foreground">

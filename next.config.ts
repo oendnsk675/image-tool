@@ -4,8 +4,6 @@ const nextConfig: NextConfig = {
   serverExternalPackages: [
     'sharp',
     '@imgly/background-removal-node',
-    '@prisma/client',
-    'prisma',
   ],
 }
 

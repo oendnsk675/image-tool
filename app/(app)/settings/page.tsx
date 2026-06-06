@@ -31,29 +31,26 @@ const DEFAULTS = {
   defaultQuality: 85,
 }
 
+const SETTINGS_STORAGE_KEY = 'pixform.settings'
+
 export default function SettingsPage() {
   const [defaultFormat, setDefaultFormat] = useState<OutputFormat>(DEFAULTS.defaultFormat)
   const [defaultQuality, setDefaultQuality] = useState(DEFAULTS.defaultQuality)
   const [saving, setSaving] = useState(false)
 
   useEffect(() => {
-    fetch('/api/settings')
-      .then((r) => r.json())
-      .then(({ data }) => {
-        if (data?.defaultFormat) setDefaultFormat(data.defaultFormat as OutputFormat)
-        if (data?.defaultQuality) setDefaultQuality(Number(data.defaultQuality))
-      })
-      .catch(() => {})
+    try {
+      const raw = localStorage.getItem(SETTINGS_STORAGE_KEY)
+      const data = raw ? JSON.parse(raw) : null
+      if (data?.defaultFormat) setDefaultFormat(data.defaultFormat as OutputFormat)
+      if (data?.defaultQuality) setDefaultQuality(Number(data.defaultQuality))
+    } catch {}
   }, [])
 
   const save = async () => {
     setSaving(true)
     try {
-      await fetch('/api/settings', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ defaultFormat, defaultQuality: String(defaultQuality) }),
-      })
+      localStorage.setItem(SETTINGS_STORAGE_KEY, JSON.stringify({ defaultFormat, defaultQuality }))
       toast.success('Settings saved')
     } catch {
       toast.error('Failed to save settings')
